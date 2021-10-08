@@ -1,0 +1,40 @@
+<html lang="en">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./index.css"/>
+        <title>Hierarchy From Scratch</title>
+
+    </head>
+
+    <body>
+
+        <h1 style="text-align: center; font-size: 3em;">Hierarchy From Scratch</h1>
+
+        <div class="canvas">
+            <div class="red node" style="top: 0; left: 0;">A</div>
+            <div class="green node" style="top: 0; left: 400;">B</div>
+            <div class="blue node" style="top: 200; left: 200;">C</div>
+            <div class="orange node" style="top: 400; left: 0;">D</div>
+            <div class="red node" style="top: 400; left: 400;">E</div>
+            <!-- <img src="./world-map.jpg"/> -->
+        </div>
+
+        <script type="module">
+
+            import dpz from "./dpz.js"
+
+            const canvas = dpz.createCanvas(".canvas", {
+                scaleStep: 0.1,
+                scaleMax: 2,
+                scaleMin: 0.01,
+            })
+
+        </script>
+
+    </body>
+
+</html>

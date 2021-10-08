@@ -1,0 +1,49 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    margin: 0;
+}
+
+.canvas {
+    background-color: gainsboro;
+    border: 2px solid black;
+    height: 500px;
+    width: 500px;
+    margin: auto;
+    position: relative;
+}
+
+.node {
+    background-color: black;
+    color: white;
+    height: 100px;
+    width: 100px;
+    display: inline-block;
+    line-height: 100px;
+    font-size: 100px;
+    text-align: center;
+    font-weight: bold;
+    position: absolute;
+}
+
+.red {
+    background-color: red;
+}
+
+
+.green {
+    background-color: green;
+}
+
+
+.blue {
+    background-color: blue;
+}
+
+
+.orange {
+    background-color: orange;
+}
