@@ -15,7 +15,7 @@
         <h1 style="text-align: center; font-size: 3em;">Hierarchy From Scratch</h1>
 
         <div class="canvas">
-            <div class="red node" style="top: 0; left: 0;">A</div>
+            <div class="red node" style="top: 0; left: 0; z-index: 100;">A</div>
             <div class="green node" style="top: 0; left: 400;">B</div>
             <div class="blue node" style="top: 200; left: 200;">C</div>
             <div class="orange node" style="top: 400; left: 0;">D</div>
@@ -32,6 +32,9 @@
                 scaleMax: 2,
                 scaleMin: 0.01,
             })
+
+            window.canvas = canvas
+            window.node = canvas.elements[0]
 
         </script>
 

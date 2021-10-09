@@ -6,17 +6,17 @@ export const DEFAULT_OPTIONS = {
     scaleMin: 0.5,
     scaleStep: 0.1,
 
-    // Should drag commence?
-    validateDrag: (element, event) => {
+    // Should drag commence? (MouseEvent)
+    validateDrag: (event, element) => {
         return event.ctrlKey && event.button === MouseButton.LEFT
     },
 
-    // Should pan commence?
+    // Should pan commence? (MouseEvent)
     validatePan: event => {
         return event.ctrlKey && event.button === MouseButton.RIGHT
     },
 
-    // Should zoom commence?
+    // Should zoom commence? (WheelEvent)
     validateZoom: event => {
         return event.ctrlKey
     },
@@ -37,9 +37,17 @@ export function createCanvas(canvasSelector, canvasOptions) {
         }
     }
 
+    const getCanvasOrigo = () => ({
+        x: canvas.offsetWidth / 2,
+        y: canvas.offsetHeight / 2
+    })
+
     let scale = options.initialScale
     let panning = false
     let recentlyStoppedPanning = false
+
+    //
+    // Dragging
 
     let elements = forEachElementChild(canvas, element => {
 
@@ -49,8 +57,8 @@ export function createCanvas(canvasSelector, canvasOptions) {
         const moveBy = (x, y) => {
             position.x += x
             position.y += y
-            translate.x += x
-            translate.y += y
+            translate.x += x * scale
+            translate.y += y * scale
             setElementTransform(element, translate.x, translate.y, scale)
         }
 
@@ -76,7 +84,7 @@ export function createCanvas(canvasSelector, canvasOptions) {
         }
 
         element.addEventListener("mousedown", event => {
-            if (options.validateDrag(element, event)) {
+            if (options.validateDrag(event, element)) {
                 event.preventDefault()
                 dispatchEvent("dragstart", event, canvasElement)
                 dragging = true
@@ -87,11 +95,7 @@ export function createCanvas(canvasSelector, canvasOptions) {
             if (dragging) {
                 event.preventDefault()
                 dispatchEvent("dragmove", event, canvasElement)
-                position.x += event.movementX
-                position.y += event.movementY
-                translate.x += event.movementX
-                translate.y += event.movementY
-                setElementTransform(element, translate.x, translate.y, scale)
+                moveBy(event.movementX, event.movementY)
             }
         })
 
@@ -105,6 +109,9 @@ export function createCanvas(canvasSelector, canvasOptions) {
 
         return canvasElement
     })
+
+    //
+    // Panning
 
     canvas.addEventListener("contextmenu", event => {
         if (recentlyStoppedPanning) {
@@ -147,6 +154,9 @@ export function createCanvas(canvasSelector, canvasOptions) {
         }
     })
 
+    //
+    // Zooming
+
     canvas.addEventListener("wheel", event => {
         if (options.validateZoom(event)) {
             event.preventDefault()
@@ -157,12 +167,11 @@ export function createCanvas(canvasSelector, canvasOptions) {
             if (direction === -1 && scale <= options.scaleMin) return
             if (direction === 1 && scale >= options.scaleMax) return
 
-            const origo = {x: canvas.offsetWidth / 2, y: canvas.offsetHeight / 2}
+            const origo = getCanvasOrigo()
             const scaleChange = direction * options.scaleStep
             scale = clamp(scale + scaleChange, options.scaleMin, options.scaleMax)
-
+ 
             console.log("Scale:", scale)
-            console.log("Origo:", origo)
 
             elements.forEach(element => {
                 const diff = {x: origo.x - element.center.x, y: origo.y - element.center.y}
@@ -177,8 +186,13 @@ export function createCanvas(canvasSelector, canvasOptions) {
     })
 
     return {
+
         target: canvas,
-        get options() { return opt },
+
+        get elements() {return elements},
+        get options() {return options},
+        get origo() {return getCanvasOrigo()},
+        get zoom() {return scale},
 
         on(eventName, callback) {
             eventHandlers[eventName] = callback
