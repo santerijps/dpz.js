@@ -51,6 +51,22 @@ In the example above, you can pan and zoom on the canvas, as well as drag the `h
 }
 ```
 
+## `canvas`
+```js
+{
+
+    target, // The canvas HTML element
+    cursorPosition, // {x, y} The current cursor position
+    elements, // An array of child elements within the canvas element
+    options, // The options in use
+    origo, // {x, y} The canvas center point
+    zoom, // Get the current zoom level
+
+    on(eventName, callback), // Add a new canvas event listener (read more below)
+
+}
+```
+
 ## Events
 Events can be configured with the `canvas.on` function by passing in the name of the event as well as a callback function to handle said event. The arguments passed to the callback function vary depending on the event, except for the DOM `Event` object, which is always the first argument of the callback function.
 

@@ -39,8 +39,20 @@ export function createCanvas(canvasSelector, canvasOptions) {
 
     const getCanvasOrigo = () => ({
         x: canvas.offsetWidth / 2,
-        y: canvas.offsetHeight / 2
+        y: canvas.offsetHeight / 2,
     })
+
+    let cursorPosition
+    const getCursorPosition = event => {
+        const position = {x: event.offsetX, y: event.offsetY}
+        let element = event.target
+        while (element && element !== canvas) {
+            position.x += element.offsetLeft
+            position.y += element.offsetTop
+            element = element.parentElement
+        }
+        return position
+    }
 
     let scale = options.initialScale
     let panning = false
@@ -62,6 +74,14 @@ export function createCanvas(canvasSelector, canvasOptions) {
             setElementTransform(element, translate.x, translate.y, scale)
         }
 
+        const moveTo = (x, y) => {
+            position.x = x
+            position.y = y
+            translate.x = x * scale
+            translate.y = y * scale
+            setElementTransform(element, translate.x, translate.y, scale)
+        }
+
         const setPosition = (x, y) => {
             position.x = x
             position.y = y
@@ -79,6 +99,7 @@ export function createCanvas(canvasSelector, canvasOptions) {
             get position() {return position},
             get translate() {return translate},
             moveBy,
+            moveTo,
             setPosition,
             setTranslate,
         }
@@ -135,6 +156,10 @@ export function createCanvas(canvasSelector, canvasOptions) {
         }
     })
 
+    canvas.addEventListener("mousemove", event => {
+        cursorPosition = getCursorPosition(event)
+    })
+
     document.addEventListener("mousemove", event => {
         if (panning) {
             event.preventDefault()
@@ -171,13 +196,13 @@ export function createCanvas(canvasSelector, canvasOptions) {
             const scaleChange = direction * options.scaleStep
             scale = clamp(scale + scaleChange, options.scaleMin, options.scaleMax)
  
-            console.log("Scale:", scale)
+            //console.log("Scale:", scale)
 
             elements.forEach(element => {
                 const diff = {x: origo.x - element.center.x, y: origo.y - element.center.y}
                 const move = {x: diff.x * (1 - scale), y: diff.y * (1 - scale)}
 
-                console.log(element.target.innerText, element.center, diff, move)
+                //console.log(element.target.innerText, element.center, diff, move)
 
                 element.setTranslate(element.position.x + move.x, element.position.y + move.y)
                 setElementTransform(element.target, element.translate.x, element.translate.y, scale)
@@ -189,6 +214,7 @@ export function createCanvas(canvasSelector, canvasOptions) {
 
         target: canvas,
 
+        get cursorPosition() {return cursorPosition},
         get elements() {return elements},
         get options() {return options},
         get origo() {return getCanvasOrigo()},
