@@ -74,14 +74,6 @@ export function createCanvas(canvasSelector, canvasOptions) {
             setElementTransform(element, translate.x, translate.y, scale)
         }
 
-        const moveTo = (x, y) => {
-            position.x = x
-            position.y = y
-            translate.x = x * scale
-            translate.y = y * scale
-            setElementTransform(element, translate.x, translate.y, scale)
-        }
-
         const setPosition = (x, y) => {
             position.x = x
             position.y = y
