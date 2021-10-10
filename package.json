@@ -1,0 +1,20 @@
+{
+  "name": "dpz.js",
+  "version": "0.5.0",
+  "description": "The purpose of this JavaScript library is to make it possible to select an HTML element to behave as a \"canvas\" on which you can place other HTML elements that can be moved around, zoomed on and panned. The canvas stays completely contained, meaning that nothing spills out of it (e.g. elements can't be dragged outside of the canvas).",
+  "main": "dpz.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santerijps/dpz.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/santerijps/dpz.js/issues"
+  },
+  "homepage": "https://github.com/santerijps/dpz.js#readme"
+}
