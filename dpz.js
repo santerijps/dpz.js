@@ -84,6 +84,10 @@ export function createCanvas(canvasSelector, canvasOptions) {
             translate.y = y
         }
 
+        const setTransform = (tx, ty, scale) => {
+            setElementTransform(element, tx, ty, scale)
+        }
+
         const canvasElement = {
             target: element,
             get offset() {return {x: element.offsetLeft + position.x, y: element.offsetTop + position.y}},
@@ -94,6 +98,7 @@ export function createCanvas(canvasSelector, canvasOptions) {
             moveTo,
             setPosition,
             setTranslate,
+            setTransform,
         }
 
         element.addEventListener("mousedown", event => {
@@ -187,17 +192,12 @@ export function createCanvas(canvasSelector, canvasOptions) {
             const origo = getCanvasOrigo()
             const scaleChange = direction * options.scaleStep
             scale = clamp(scale + scaleChange, options.scaleMin, options.scaleMax)
- 
-            //console.log("Scale:", scale)
 
             elements.forEach(element => {
                 const diff = {x: origo.x - element.center.x, y: origo.y - element.center.y}
                 const move = {x: diff.x * (1 - scale), y: diff.y * (1 - scale)}
-
-                //console.log(element.target.innerText, element.center, diff, move)
-
                 element.setTranslate(element.position.x + move.x, element.position.y + move.y)
-                setElementTransform(element.target, element.translate.x, element.translate.y, scale)
+                element.setTransform(element.translate.x, element.translate.y, scale)
             })
         }
     })
