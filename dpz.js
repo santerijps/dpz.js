@@ -1,4 +1,5 @@
 import { Canvas, DEFAULT_CANVAS_OPTIONS } from "./src/canvas.js"
+import CanvasElement from "./src/canvas-element.js"
 import { Throwable } from "./src/util.js"
 
 
@@ -11,4 +12,6 @@ export function createCanvas(canvasSelector, canvasOptions) {
 
 export default {
     createCanvas,
+    Canvas,
+    CanvasElement,
 }
