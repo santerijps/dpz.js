@@ -4,11 +4,15 @@ import CanvasElement from "./canvas-element.js"
 
 export const DEFAULT_CANVAS_OPTIONS = {
 
-    // Scaling options
+    // Scaling / Zooming
     initialScale: 1,
     scaleMax: 1.5,
     scaleMin: 0.5,
     scaleStep: 0.1,
+
+    // Transitions
+    moveTransition: "",
+    scaleTransition: "",
 
     // Should drag commence? (MouseEvent)
     validateDrag: (event, element) => {
@@ -78,7 +82,8 @@ export class Canvas {
                 event.preventDefault()
                 this.dispatchEvent("panmove", event)
                 this.elements.forEach(element => {
-                    element.moveBy(event.movementX, event.movementY)
+                    element.positionBy(event.movementX, event.movementY)
+                    element.translateBy(event.movementX * element.scale, event.movementY * element.scale)
                     element.render()
                 })
             }
@@ -106,8 +111,8 @@ export class Canvas {
 
     _onZoom(direction, scaleChange) {
 
-        if (direction === -1 && this._scale <= this.options.scaleMin) return
-        if (direction === 1 && this._scale >= this.options.scaleMax) return
+        if (direction === -1 && this._scale - scaleChange <= this.options.scaleMin) return
+        if (direction === 1 && this._scale + scaleChange >= this.options.scaleMax) return
 
         this._scale = clamp(this._scale + scaleChange, this.options.scaleMin, this.options.scaleMax)
 
@@ -116,6 +121,7 @@ export class Canvas {
             const move = {x: diff.x * (1 - this._scale), y: diff.y * (1 - this._scale)}
             element.setTranslate(element.position.x + move.x, element.position.y + move.y)
             element.setScale(this._scale)
+            element.setTransition(this.options.scaleTransition)
             element.render()
         })
     }

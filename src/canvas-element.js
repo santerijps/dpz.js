@@ -6,6 +6,7 @@ export default class CanvasElement {
     _position = {x: 0, y: 0}
     _translate0 = {x: 0, y: 0}
     _translate = {x: 0, y: 0}
+    _transition = ""
     _scale = 1
     _dragging = false
 
@@ -19,6 +20,10 @@ export default class CanvasElement {
         this.target = htmlElement
         this.dispatchEvent = eventDispatcher
         this.options = options
+        this.defaultStyles = {
+            transition: htmlElement.style.transition
+        }
+        this._transition = this.defaultStyles.transition
         this._addEventListeners()
     }
 
@@ -51,6 +56,11 @@ export default class CanvasElement {
                 const deltaY = (this._translate.y - this._translate0.y)  / this._scale
                 this.positionBy(deltaX, deltaY)
             }
+        })
+
+        this.target.addEventListener("transitionend", event => {
+            this._transition = this.defaultStyles.transition
+            this.render()
         })
 
     }
@@ -105,6 +115,11 @@ export default class CanvasElement {
         return this
     }
 
+    setTransition(transition) {
+        this._transition = transition
+        return this
+    }
+
     positionBy(x, y) {
         this._position.x += x ?? 0
         this._position.y += y ?? 0
@@ -120,6 +135,7 @@ export default class CanvasElement {
     moveBy(x, y) {
         x = x ?? 0
         y = y ?? 0
+        this._transition = this.options.moveTransition
         this.positionBy(x, y)
         this.translateBy(x * this._scale, y * this._scale)
         return this
@@ -133,6 +149,7 @@ export default class CanvasElement {
     render() {
         const tx = this._translate.x, ty = this._translate.y, sc = this._scale
         this.target.style.transform = `translate(${tx}px, ${ty}px) scale(${sc})`
+        this.target.style.transition = this._transition
         return this
     }
 

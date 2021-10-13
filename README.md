@@ -28,26 +28,37 @@ In the example above, you can pan and zoom on the canvas, as well as drag the `h
 ## Default options
 ```js
 {
-    // Scaling/zoom options
+
+    // Scaling / Zooming
     initialScale: 1,
     scaleMax: 1.5,
     scaleMin: 0.5,
     scaleStep: 0.1,
 
-    // Should drag commence?
-    validateDrag: (element, event) => {
+    // Transitions
+
+    // Transition used when using element.moveBy
+    moveTransition: "",
+    // Transition used when zooming
+    scaleTransition: "",
+
+    // Validators
+
+    // Should drag commence? (MouseEvent)
+    validateDrag: (event, element) => {
         return event.ctrlKey && event.button === MouseButton.LEFT
     },
 
-    // Should pan commence?
+    // Should pan commence? (MouseEvent)
     validatePan: event => {
         return event.ctrlKey && event.button === MouseButton.RIGHT
     },
 
-    // Should zoom commence?
+    // Should zoom commence? (WheelEvent)
     validateZoom: event => {
         return event.ctrlKey
     },
+
 }
 ```
 
