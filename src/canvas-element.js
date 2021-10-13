@@ -118,8 +118,10 @@ export default class CanvasElement {
     }
 
     moveBy(x, y) {
+        x = x ?? 0
+        y = y ?? 0
         this.positionBy(x, y)
-        this.translateBy(x, y)
+        this.translateBy(x * this._scale, y * this._scale)
         return this
     }
 
