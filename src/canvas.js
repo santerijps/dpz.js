@@ -93,31 +93,31 @@ export class Canvas {
             }
         })
 
-        this.target.addEventListener("wheel", this._onZoom.bind(this))
+        this.target.addEventListener("wheel", event => {
+            if (this.options.validateZoom(event)) {
+                event.preventDefault()
+                this.dispatchEvent("zoom", event)
+                const direction = -event.deltaY * 0.01
+                this._onZoom(direction, direction * this.options.scaleStep)
+            }
+        })
 
     }
 
-    _onZoom(event) {
-        if (this.options.validateZoom(event)) {
-            event.preventDefault()
-            this.dispatchEvent("zoom", event)
+    _onZoom(direction, scaleChange) {
 
-            const direction = -event.deltaY * 0.01
+        if (direction === -1 && this._scale <= this.options.scaleMin) return
+        if (direction === 1 && this._scale >= this.options.scaleMax) return
 
-            if (direction === -1 && this._scale <= this.options.scaleMin) return
-            if (direction === 1 && this._scale >= this.options.scaleMax) return
+        this._scale = clamp(this._scale + scaleChange, this.options.scaleMin, this.options.scaleMax)
 
-            const scaleChange = direction * this.options.scaleStep
-            this._scale = clamp(this._scale + scaleChange, this.options.scaleMin, this.options.scaleMax)
-
-            this.elements.forEach(element => {
-                const diff = {x: this.origo.x - element.center.x, y: this.origo.y - element.center.y}
-                const move = {x: diff.x * (1 - this._scale), y: diff.y * (1 - this._scale)}
-                element.setTranslate(element.position.x + move.x, element.position.y + move.y)
-                element.setScale(this._scale)
-                element.render()
-            })
-        }
+        this.elements.forEach(element => {
+            const diff = {x: this.origo.x - element.center.x, y: this.origo.y - element.center.y}
+            const move = {x: diff.x * (1 - this._scale), y: diff.y * (1 - this._scale)}
+            element.setTranslate(element.position.x + move.x, element.position.y + move.y)
+            element.setScale(this._scale)
+            element.render()
+        })
     }
 
     get origo() {
@@ -156,6 +156,21 @@ export class Canvas {
 
     reload() {
         this.elements = this.getCanvasElements()
+    }
+
+    setScale(scale) {
+        this._scale = scale
+        this._onZoom(1, 0)
+    }
+
+    zoomIn(x) {
+        x = x ?? this.options.scaleStep
+        this._onZoom(1, x)
+    }
+
+    zoomOut(x) {
+        x = x ?? this.options.scaleStep
+        this._onZoom(-1, -x)
     }
 
 }

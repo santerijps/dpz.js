@@ -4,6 +4,7 @@
 export default class CanvasElement {
 
     _position = {x: 0, y: 0}
+    _translate0 = {x: 0, y: 0}
     _translate = {x: 0, y: 0}
     _scale = 1
     _dragging = false
@@ -28,6 +29,7 @@ export default class CanvasElement {
                 event.preventDefault()
                 this.dispatchEvent("dragstart", event, this)
                 this._dragging = true
+                this._translate0 = {x: this._translate.x, y: this._translate.y}
             }
         })
 
@@ -35,8 +37,7 @@ export default class CanvasElement {
             if (this._dragging) {
                 event.preventDefault()
                 this.dispatchEvent("dragmove", event, this)
-                this.positionBy(event.movementX, event.movementY)
-                this.translateBy(event.movementX * this._scale, event.movementY * this._scale)
+                this.translateBy(event.movementX, event.movementY)
                 this.render()
             }
         })
@@ -46,6 +47,9 @@ export default class CanvasElement {
                 event.preventDefault()
                 this.dispatchEvent("dragend", event, this)
                 this._dragging = false
+                const deltaX = (this._translate.x - this._translate0.x) / this._scale
+                const deltaY = (this._translate.y - this._translate0.y)  / this._scale
+                this.positionBy(deltaX, deltaY)
             }
         })
 
@@ -80,45 +84,54 @@ export default class CanvasElement {
     setPosition(x, y) {
         this._position.x = x
         this._position.y = y
+        return this
     }
 
     setTranslate(x, y) {
         this._translate.x = x
         this._translate.y = y
+        return this
     }
 
     setScale(x) {
         this._scale = x
+        return this
     }
 
     setTransform(translateX, translateY, scale) {
         this._translate.x = translateX ?? this._translate.x
         this._translate.y = translateY ?? this._translate.y
         this._scale = scale ?? this._scale
+        return this
     }
 
     positionBy(x, y) {
         this._position.x += x ?? 0
         this._position.y += y ?? 0
+        return this
     }
 
     translateBy(x, y) {
         this._translate.x += x ?? 0
         this._translate.y += y ?? 0
+        return this
     }
 
     moveBy(x, y) {
         this.positionBy(x, y)
         this.translateBy(x, y)
+        return this
     }
 
     scaleBy(x) {
         this._scale += x ?? 0
+        return this
     }
 
     render() {
         const tx = this._translate.x, ty = this._translate.y, sc = this._scale
         this.target.style.transform = `translate(${tx}px, ${ty}px) scale(${sc})`
+        return this
     }
 
 }
