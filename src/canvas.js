@@ -83,7 +83,7 @@ export class Canvas {
                 this.dispatchEvent("panmove", event)
                 this.elements.forEach(element => {
                     element.positionBy(event.movementX, event.movementY)
-                    element.translateBy(event.movementX * element.scale, event.movementY * element.scale)
+                    element.translateBy(event.movementX, event.movementY)
                     element.render()
                 })
             }
