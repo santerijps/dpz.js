@@ -81,8 +81,10 @@
 
             const canvas = dpz.createCanvas(".canvas", {
                 scaleStep: 0.1,
-                scaleMax: 2,
+                scaleMax: 3,
                 scaleMin: 0.01,
+                moveTransition: "all 1s ease-in-out",
+                scaleTransition: "all .2s ease-in-out",
             })
 
             window.canvas = canvas

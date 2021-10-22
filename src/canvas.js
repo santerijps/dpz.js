@@ -4,6 +4,11 @@ import CanvasElement from "./canvas-element.js"
 
 export const DEFAULT_CANVAS_OPTIONS = {
 
+    // Enable core features
+    allowDrag: true,
+    allowPan: true,
+    allowZoom: true,
+
     // Scaling / Zooming
     initialScale: 1,
     scaleMax: 1.5,
@@ -66,7 +71,7 @@ export class Canvas {
         })
 
         this.target.addEventListener("mousedown", event => {
-            if (this.options.validatePan(event)) {
+            if (this.options.allowPan && this.options.validatePan(event)) {
                 event.preventDefault()
                 this.dispatchEvent("panstart", event)
                 this._panning = true
@@ -82,7 +87,8 @@ export class Canvas {
                 event.preventDefault()
                 this.dispatchEvent("panmove", event)
                 this.elements.forEach(element => {
-                    element.positionBy(event.movementX, event.movementY)
+                    // TODO: The commented line below removes unpredictable zooming
+                    //element.positionBy(event.movementX, event.movementY)
                     element.translateBy(event.movementX, event.movementY)
                     element.render()
                 })
@@ -99,7 +105,7 @@ export class Canvas {
         })
 
         this.target.addEventListener("wheel", event => {
-            if (this.options.validateZoom(event)) {
+            if (this.options.allowZoom && this.options.validateZoom(event)) {
                 event.preventDefault()
                 this.dispatchEvent("zoom", event)
                 const direction = -event.deltaY * 0.01
@@ -115,9 +121,10 @@ export class Canvas {
         if (direction === 1 && this._scale + scaleChange >= this.options.scaleMax) return
 
         this._scale = clamp(this._scale + scaleChange, this.options.scaleMin, this.options.scaleMax)
+        const point = this.origo
 
         this.elements.forEach(element => {
-            const diff = {x: this.origo.x - element.center.x, y: this.origo.y - element.center.y}
+            const diff = {x: point.x - element.center.x, y: point.y - element.center.y}
             const move = {x: diff.x * (1 - this._scale), y: diff.y * (1 - this._scale)}
             element.setTranslate(element.position.x + move.x, element.position.y + move.y)
             element.setScale(this._scale)

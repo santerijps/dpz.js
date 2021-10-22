@@ -30,7 +30,7 @@ export default class CanvasElement {
     _addEventListeners() {
 
         this.target.addEventListener("mousedown", event => {
-            if (this.options.validateDrag(event, this.target)) {
+            if (this.options.allowDrag && this.options.validateDrag(event, this.target)) {
                 event.preventDefault()
                 this.dispatchEvent("dragstart", event, this)
                 this._dragging = true
